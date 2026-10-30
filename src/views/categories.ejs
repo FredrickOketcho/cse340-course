@@ -1,0 +1,29 @@
+<%- include('partials/header', { title, currentPage }) %>
+<section class="page-intro">
+    <p class="eyebrow">Find the cause that moves you</p>
+    <h1><%= title %></h1>
+    <p class="lead">Explore service opportunities by the kind of impact you want to make.</p>
+</section>
+<section class="card-grid category-grid" aria-label="Service project categories">
+    <article class="content-card category-card">
+        <span class="category-icon" aria-hidden="true">01</span>
+        <h2>Environmental</h2>
+        <p>Care for shared outdoor spaces and protect the natural world.</p>
+    </article>
+    <article class="content-card category-card">
+        <span class="category-icon" aria-hidden="true">02</span>
+        <h2>Educational</h2>
+        <p>Support learning and help students build confidence and skills.</p>
+    </article>
+    <article class="content-card category-card">
+        <span class="category-icon" aria-hidden="true">03</span>
+        <h2>Community Service</h2>
+        <p>Strengthen neighborhoods by showing up for local needs.</p>
+    </article>
+    <article class="content-card category-card">
+        <span class="category-icon" aria-hidden="true">04</span>
+        <h2>Health and Wellness</h2>
+        <p>Promote well-being and care for people in your community.</p>
+    </article>
+</section>
+<%- include('partials/footer') %>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#123c35">
+    <title><%= title %> | CSE 340 Service Network</title>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a class="brand" href="/" aria-label="CSE 340 Service Network home">
+                <span class="brand-mark" aria-hidden="true">SN</span>
+                <span class="brand-name">Service Network</span>
+            </a>
+            <nav aria-label="Main navigation">
+                <ul class="nav-list">
+                    <li><a href="/" <% if (currentPage === 'home') { %>aria-current="page"<% } %>>Home</a></li>
+                    <li><a href="/organizations" <% if (currentPage === 'organizations') { %>aria-current="page"<% } %>>Organizations</a></li>
+                    <li><a href="/projects" <% if (currentPage === 'projects') { %>aria-current="page"<% } %>>Projects</a></li>
+                    <li><a href="/categories" <% if (currentPage === 'categories') { %>aria-current="page"<% } %>>Categories</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main class="main-content">

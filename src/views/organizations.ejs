@@ -1,0 +1,33 @@
+<%- include('partials/header', { title, currentPage }) %>
+<section class="page-intro">
+    <p class="eyebrow">Working together for good</p>
+    <h1><%= title %></h1>
+    <p class="lead">Meet the community partners creating meaningful ways to serve.</p>
+</section>
+<section class="card-grid organization-grid" aria-label="Partner organizations">
+    <article class="content-card organization-card">
+        <img src="/images/brightfuture-logo.png" alt="BrightFuture Builders logo">
+        <div>
+            <h2>BrightFuture Builders</h2>
+            <p>Building brighter neighborhoods through community action.</p>
+            <a href="mailto:info@brightfuture.org">info@brightfuture.org</a>
+        </div>
+    </article>
+    <article class="content-card organization-card">
+        <img src="/images/greenharvest-logo.png" alt="GreenHarvest Growers logo">
+        <div>
+            <h2>GreenHarvest Growers</h2>
+            <p>Growing healthy food and stronger local connections.</p>
+            <a href="mailto:contact@greenharvest.org">contact@greenharvest.org</a>
+        </div>
+    </article>
+    <article class="content-card organization-card">
+        <img src="/images/unityserve-logo.png" alt="UnityServe Volunteers logo">
+        <div>
+            <h2>UnityServe Volunteers</h2>
+            <p>Bringing people together to support neighbors in need.</p>
+            <a href="mailto:hello@unityserve.org">hello@unityserve.org</a>
+        </div>
+    </article>
+</section>
+<%- include('partials/footer') %>

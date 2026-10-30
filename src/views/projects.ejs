@@ -1,0 +1,27 @@
+<%- include('partials/header', { title, currentPage }) %>
+<section class="page-intro">
+    <p class="eyebrow">Turn good intentions into action</p>
+    <h1><%= title %></h1>
+    <p class="lead">Choose a project and help make a lasting difference in your community.</p>
+</section>
+<section aria-labelledby="projects-heading">
+    <h2 class="section-heading" id="projects-heading">Upcoming service projects</h2>
+    <div class="card-grid">
+        <article class="content-card project-card">
+            <span class="card-number" aria-hidden="true">01</span>
+            <h3>Park Cleanup</h3>
+            <p>Join us to clean up local parks and make them beautiful!</p>
+        </article>
+        <article class="content-card project-card">
+            <span class="card-number" aria-hidden="true">02</span>
+            <h3>Food Drive</h3>
+            <p>Help collect and distribute food to those in need.</p>
+        </article>
+        <article class="content-card project-card">
+            <span class="card-number" aria-hidden="true">03</span>
+            <h3>Community Tutoring</h3>
+            <p>Volunteer to tutor students in various subjects.</p>
+        </article>
+    </div>
+</section>
+<%- include('partials/footer') %>
