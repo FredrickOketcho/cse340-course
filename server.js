@@ -2,6 +2,9 @@ import 'dotenv/config';
 import express from 'express';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import { getAllCategories } from './src/models/categories.js';
+import { getAllOrganizations } from './src/models/organizations.js';
+import { getAllProjects } from './src/models/projects.js';
 
 const nodeEnv = process.env.NODE_ENV?.toLowerCase() || 'production';
 const port = process.env.PORT || 3000;
@@ -21,16 +24,52 @@ app.get('/', (req, res) => {
   res.render('home', { title: 'Home', currentPage: 'home' });
 });
 
-app.get('/organizations', (req, res) => {
-  res.render('organizations', { title: 'Organizations', currentPage: 'organizations' });
+app.get('/organizations', async (req, res, next) => {
+  try {
+    const organizations = await getAllOrganizations();
+    res.render('organizations', {
+      title: 'Organizations',
+      currentPage: 'organizations',
+      organizations,
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
-app.get('/projects', (req, res) => {
-  res.render('projects', { title: 'Service Projects', currentPage: 'projects' });
+app.get('/projects', async (req, res, next) => {
+  try {
+    const projects = await getAllProjects();
+    res.render('projects', {
+      title: 'Service Projects',
+      currentPage: 'projects',
+      projects,
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
-app.get('/categories', (req, res) => {
-  res.render('categories', { title: 'Categories', currentPage: 'categories' });
+app.get('/categories', async (req, res, next) => {
+  try {
+    const categories = await getAllCategories();
+    res.render('categories', {
+      title: 'Categories',
+      currentPage: 'categories',
+      categories,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.use((error, req, res, next) => {
+  console.error(error);
+  if (res.headersSent) {
+    next(error);
+    return;
+  }
+  res.status(500).send('Unable to load the requested page.');
 });
 
 app.listen(port, () => {
