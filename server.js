@@ -5,6 +5,7 @@ import path from 'path';
 import { getAllCategories } from './src/models/categories.js';
 import { getAllOrganizations } from './src/models/organizations.js';
 import { getAllProjects } from './src/models/projects.js';
+import { initializeDatabase } from './src/database.js';
 
 const nodeEnv = process.env.NODE_ENV?.toLowerCase() || 'production';
 const port = process.env.PORT || 3000;
@@ -71,6 +72,8 @@ app.use((error, req, res, next) => {
   }
   res.status(500).send('Unable to load the requested page.');
 });
+
+await initializeDatabase();
 
 app.listen(port, () => {
   console.log(`Server is running at http://127.0.0.1:${port}`);

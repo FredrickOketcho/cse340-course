@@ -1,9 +1,4 @@
-DROP TABLE IF EXISTS project_categories;
-DROP TABLE IF EXISTS service_projects;
-DROP TABLE IF EXISTS categories;
-DROP TABLE IF EXISTS organizations;
-
-CREATE TABLE organizations (
+CREATE TABLE IF NOT EXISTS organizations (
     organization_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name VARCHAR(120) NOT NULL UNIQUE,
     description TEXT NOT NULL,
@@ -13,9 +8,10 @@ CREATE TABLE organizations (
 INSERT INTO organizations (name, description, email) VALUES
     ('BrightFuture Builders', 'Building brighter neighborhoods through community action.', 'info@brightfuture.org'),
     ('GreenHarvest Growers', 'Growing healthy food and stronger local connections.', 'contact@greenharvest.org'),
-    ('UnityServe Volunteers', 'Bringing people together to support neighbors in need.', 'hello@unityserve.org');
+    ('UnityServe Volunteers', 'Bringing people together to support neighbors in need.', 'hello@unityserve.org')
+ON CONFLICT (name) DO NOTHING;
 
-CREATE TABLE service_projects (
+CREATE TABLE IF NOT EXISTS service_projects (
     project_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     title VARCHAR(160) NOT NULL,
     project_date DATE NOT NULL,
@@ -43,9 +39,10 @@ FROM (VALUES
     ('Winter Clothing Distribution', '2027-04-24', 'Organize donated clothing and assist visitors at a community distribution.', 'UnityServe Volunteers'),
     ('Neighbor Check-In Visits', '2027-05-22', 'Visit older neighbors and connect them with community support.', 'UnityServe Volunteers')
 ) AS project (title, project_date, description, organization_name)
-JOIN organizations AS organization ON organization.name = project.organization_name;
+JOIN organizations AS organization ON organization.name = project.organization_name
+ON CONFLICT (organization_id, title) DO NOTHING;
 
-CREATE TABLE categories (
+CREATE TABLE IF NOT EXISTS categories (
     category_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name VARCHAR(80) NOT NULL UNIQUE
 );
@@ -55,9 +52,10 @@ INSERT INTO categories (name) VALUES
     ('Education'),
     ('Food Security'),
     ('Community Support'),
-    ('Health and Wellness');
+    ('Health and Wellness')
+ON CONFLICT (name) DO NOTHING;
 
-CREATE TABLE project_categories (
+CREATE TABLE IF NOT EXISTS project_categories (
     project_id INTEGER NOT NULL REFERENCES service_projects (project_id) ON DELETE CASCADE,
     category_id INTEGER NOT NULL REFERENCES categories (category_id) ON DELETE CASCADE,
     PRIMARY KEY (project_id, category_id)
@@ -88,4 +86,5 @@ FROM (VALUES
     ('Neighbor Check-In Visits', 'Community Support')
 ) AS assignment (project_title, category_name)
 JOIN service_projects AS project ON project.title = assignment.project_title
-JOIN categories AS category ON category.name = assignment.category_name;
+JOIN categories AS category ON category.name = assignment.category_name
+ON CONFLICT (project_id, category_id) DO NOTHING;
