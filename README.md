@@ -21,6 +21,7 @@ and start the server with `npm start`.
 Local environment variables belong in `.env`. That file is ignored by Git; do
 not commit private values.
 
-The Render Blueprint provisions a PostgreSQL database and connects it to the
-web service. The app creates and seeds missing tables at startup. When applying
-the Blueprint in Render, approve creation of the database resource.
+The Render web service needs a `DATABASE_URL` environment variable containing
+the connection string for an existing PostgreSQL database. The Blueprint does
+not provision a database, so it can use an existing database without creating
+another free-tier database. The app creates and seeds missing tables at startup.
