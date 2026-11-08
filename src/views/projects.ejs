@@ -12,6 +12,10 @@
                 <span class="card-number" aria-hidden="true"><%= String(index + 1).padStart(2, '0') %></span>
                 <h3><%= project.project_date %>: <%= project.title %> (<%= project.organization_name %>)</h3>
                 <p><%= project.description %></p>
+                <p><strong>Location:</strong> <%= project.location %></p>
+                <% if (project.categories) { %>
+                    <p><strong>Categories:</strong> <%= project.categories %></p>
+                <% } %>
             </article>
         <% }) %>
     </div>

@@ -6,8 +6,16 @@ export const getAllProjects = async () => {
       project.project_id,
       project.title,
       project.description,
+      project.location,
       TO_CHAR(project.project_date, 'FMMonth DD, YYYY') AS project_date,
-      organization.name AS organization_name
+      organization.name AS organization_name,
+      COALESCE((
+        SELECT STRING_AGG(category.name, ', ' ORDER BY category.name)
+        FROM project_categories AS project_category
+        JOIN categories AS category
+          ON category.category_id = project_category.category_id
+        WHERE project_category.project_id = project.project_id
+      ), '') AS categories
     FROM service_projects AS project
     JOIN organizations AS organization
       ON organization.organization_id = project.organization_id
