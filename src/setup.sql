@@ -2,45 +2,55 @@ CREATE TABLE IF NOT EXISTS organizations (
     organization_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name VARCHAR(120) NOT NULL UNIQUE,
     description TEXT NOT NULL,
-    email VARCHAR(254) NOT NULL UNIQUE
+    email VARCHAR(254) NOT NULL UNIQUE,
+    logo_filename VARCHAR(255)
 );
 
-INSERT INTO organizations (name, description, email) VALUES
-    ('BrightFuture Builders', 'Building brighter neighborhoods through community action.', 'info@brightfuture.org'),
-    ('GreenHarvest Growers', 'Growing healthy food and stronger local connections.', 'contact@greenharvest.org'),
-    ('UnityServe Volunteers', 'Bringing people together to support neighbors in need.', 'hello@unityserve.org')
-ON CONFLICT (name) DO NOTHING;
+ALTER TABLE organizations
+    ADD COLUMN IF NOT EXISTS logo_filename VARCHAR(255);
+
+INSERT INTO organizations (name, description, email, logo_filename) VALUES
+    ('BrightFuture Builders', 'Building brighter neighborhoods through community action.', 'info@brightfuture.org', 'brightfuture-logo.png'),
+    ('GreenHarvest Growers', 'Growing healthy food and stronger local connections.', 'contact@greenharvest.org', 'greenharvest-logo.png'),
+    ('UnityServe Volunteers', 'Bringing people together to support neighbors in need.', 'hello@unityserve.org', 'unityserve-logo.png')
+ON CONFLICT (name) DO UPDATE
+SET logo_filename = EXCLUDED.logo_filename;
 
 CREATE TABLE IF NOT EXISTS service_projects (
     project_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     title VARCHAR(160) NOT NULL,
     project_date DATE NOT NULL,
     description TEXT NOT NULL,
+    location VARCHAR(255),
     organization_id INTEGER NOT NULL REFERENCES organizations (organization_id) ON DELETE CASCADE,
     UNIQUE (organization_id, title)
 );
 
-INSERT INTO service_projects (title, project_date, description, organization_id)
-SELECT project.title, project.project_date::DATE, project.description, organization.organization_id
+ALTER TABLE service_projects
+    ADD COLUMN IF NOT EXISTS location VARCHAR(255);
+
+INSERT INTO service_projects (title, project_date, description, location, organization_id)
+SELECT project.title, project.project_date::DATE, project.description, project.location, organization.organization_id
 FROM (VALUES
-    ('Neighborhood Park Cleanup', '2027-01-16', 'Clean trails, collect litter, and refresh shared park spaces.', 'BrightFuture Builders'),
-    ('Community Garden Build', '2027-02-06', 'Prepare garden beds for a new neighborhood growing season.', 'BrightFuture Builders'),
-    ('Accessible Playground Refresh', '2027-03-13', 'Repair and repaint equipment at a local accessible playground.', 'BrightFuture Builders'),
-    ('School Reading Corner', '2027-04-10', 'Create welcoming reading spaces for elementary school students.', 'BrightFuture Builders'),
-    ('Senior Center Repairs', '2027-05-08', 'Complete small repairs and improvements at a neighborhood senior center.', 'BrightFuture Builders'),
-    ('Community Garden Planting', '2027-01-23', 'Plant seasonal vegetables and herbs in community garden plots.', 'GreenHarvest Growers'),
-    ('Farmers Market Food Drive', '2027-02-20', 'Collect fresh produce donations for local food pantries.', 'GreenHarvest Growers'),
-    ('School Garden Workshops', '2027-03-20', 'Help students learn how to grow and care for food plants.', 'GreenHarvest Growers'),
-    ('Neighborhood Compost Day', '2027-04-17', 'Teach residents composting basics and prepare shared compost bins.', 'GreenHarvest Growers'),
-    ('Harvest Box Packing', '2027-05-15', 'Pack locally grown produce boxes for families in need.', 'GreenHarvest Growers'),
-    ('Community Food Pantry Shift', '2027-01-30', 'Sort donations and help prepare food pantry orders.', 'UnityServe Volunteers'),
-    ('After-School Tutoring', '2027-02-27', 'Support students with reading, homework, and study skills.', 'UnityServe Volunteers'),
-    ('Wellness Fair Volunteers', '2027-03-27', 'Help local residents connect with health and wellness resources.', 'UnityServe Volunteers'),
-    ('Winter Clothing Distribution', '2027-04-24', 'Organize donated clothing and assist visitors at a community distribution.', 'UnityServe Volunteers'),
-    ('Neighbor Check-In Visits', '2027-05-22', 'Visit older neighbors and connect them with community support.', 'UnityServe Volunteers')
-) AS project (title, project_date, description, organization_name)
+    ('Neighborhood Park Cleanup', '2027-01-16', 'Clean trails, collect litter, and refresh shared park spaces.', 'Neighborhood Park', 'BrightFuture Builders'),
+    ('Community Garden Build', '2027-02-06', 'Prepare garden beds for a new neighborhood growing season.', 'Community Garden', 'BrightFuture Builders'),
+    ('Accessible Playground Refresh', '2027-03-13', 'Repair and repaint equipment at a local accessible playground.', 'Accessible Playground', 'BrightFuture Builders'),
+    ('School Reading Corner', '2027-04-10', 'Create welcoming reading spaces for elementary school students.', 'Local Elementary School', 'BrightFuture Builders'),
+    ('Senior Center Repairs', '2027-05-08', 'Complete small repairs and improvements at a neighborhood senior center.', 'Neighborhood Senior Center', 'BrightFuture Builders'),
+    ('Community Garden Planting', '2027-01-23', 'Plant seasonal vegetables and herbs in community garden plots.', 'Community Garden', 'GreenHarvest Growers'),
+    ('Farmers Market Food Drive', '2027-02-20', 'Collect fresh produce donations for local food pantries.', 'Farmers Market', 'GreenHarvest Growers'),
+    ('School Garden Workshops', '2027-03-20', 'Help students learn how to grow and care for food plants.', 'Local School Garden', 'GreenHarvest Growers'),
+    ('Neighborhood Compost Day', '2027-04-17', 'Teach residents composting basics and prepare shared compost bins.', 'Community Compost Site', 'GreenHarvest Growers'),
+    ('Harvest Box Packing', '2027-05-15', 'Pack locally grown produce boxes for families in need.', 'Community Farm', 'GreenHarvest Growers'),
+    ('Community Food Pantry Shift', '2027-01-30', 'Sort donations and help prepare food pantry orders.', 'Community Food Pantry', 'UnityServe Volunteers'),
+    ('After-School Tutoring', '2027-02-27', 'Support students with reading, homework, and study skills.', 'Community Learning Center', 'UnityServe Volunteers'),
+    ('Wellness Fair Volunteers', '2027-03-27', 'Help local residents connect with health and wellness resources.', 'Community Center', 'UnityServe Volunteers'),
+    ('Winter Clothing Distribution', '2027-04-24', 'Organize donated clothing and assist visitors at a community distribution.', 'Community Distribution Center', 'UnityServe Volunteers'),
+    ('Neighbor Check-In Visits', '2027-05-22', 'Visit older neighbors and connect them with community support.', 'Local Neighborhoods', 'UnityServe Volunteers')
+) AS project (title, project_date, description, location, organization_name)
 JOIN organizations AS organization ON organization.name = project.organization_name
-ON CONFLICT (organization_id, title) DO NOTHING;
+ON CONFLICT (organization_id, title) DO UPDATE
+SET location = EXCLUDED.location;
 
 CREATE TABLE IF NOT EXISTS categories (
     category_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
