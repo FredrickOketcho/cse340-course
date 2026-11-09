@@ -1,0 +1,18 @@
+<%- include('partials/header', { title, currentPage }) %>
+<section class="page-intro">
+    <p class="eyebrow">Explore service opportunities</p>
+    <h1><%= category.name %></h1>
+</section>
+<section aria-labelledby="category-projects-heading">
+    <h2 class="section-heading" id="category-projects-heading">Service projects</h2>
+    <% if (projects.length > 0) { %>
+        <ul>
+            <% projects.forEach((project) => { %>
+                <li><a href="/project/<%= project.project_id %>"><%= project.title %></a></li>
+            <% }) %>
+        </ul>
+    <% } else { %>
+        <p>There are no service projects in this category yet.</p>
+    <% } %>
+</section>
+<%- include('partials/footer') %>

@@ -7,7 +7,8 @@ export const getAllProjects = async () => {
       project.title,
       project.description,
       project.location,
-      TO_CHAR(project.project_date, 'FMMonth DD, YYYY') AS project_date,
+      TO_CHAR(project.project_date, 'FMMonth DD, YYYY') AS date,
+      project.organization_id,
       organization.name AS organization_name,
       COALESCE((
         SELECT STRING_AGG(category.name, ', ' ORDER BY category.name)
@@ -77,4 +78,17 @@ export const getProjectDetails = async (id) => {
     [id],
   );
   return result.rows[0] ?? null;
+};
+
+export const getCategoriesByProjectId = async (projectId) => {
+  const result = await pool.query(
+    `SELECT category.category_id, category.name
+    FROM categories AS category
+    JOIN project_categories AS project_category
+      ON project_category.category_id = category.category_id
+    WHERE project_category.project_id = $1
+    ORDER BY category.name`,
+    [projectId],
+  );
+  return result.rows;
 };
