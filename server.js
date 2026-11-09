@@ -76,13 +76,37 @@ app.get('/categories', async (req, res, next) => {
   }
 });
 
+app.get('/test-error', (req, res, next) => {
+  const error = new Error('This is a test error');
+  error.status = 500;
+  next(error);
+});
+
+app.use((req, res, next) => {
+  const error = new Error('Page Not Found');
+  error.status = 404;
+  next(error);
+});
+
 app.use((error, req, res, next) => {
-  console.error(error);
+  console.error('Error occurred:', error.message);
+  console.error('Stack trace:', error.stack);
+
   if (res.headersSent) {
     next(error);
     return;
   }
-  res.status(500).send('Unable to load the requested page.');
+
+  const status = error.status || 500;
+  const template = status === 404 ? '404' : '500';
+  const context = {
+    title: status === 404 ? 'Page Not Found' : 'Server Error',
+    currentPage: '',
+    error: error.message,
+    stack: error.stack,
+  };
+
+  res.status(status).render(`errors/${template}`, context);
 });
 
 await initializeDatabase();
