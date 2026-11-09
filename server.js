@@ -2,10 +2,8 @@ import 'dotenv/config';
 import express from 'express';
 import { fileURLToPath } from 'url';
 import path from 'path';
-import { getAllCategories } from './src/models/categories.js';
-import { getAllOrganizations } from './src/models/organizations.js';
-import { getAllProjects } from './src/models/projects.js';
 import { initializeDatabase } from './src/database.js';
+import router from './src/routes.js';
 
 const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
 const port = process.env.PORT || 3000;
@@ -33,54 +31,7 @@ app.use((req, res, next) => {
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', (req, res) => {
-  res.render('home', { title: 'Home', currentPage: 'home' });
-});
-
-app.get('/organizations', async (req, res, next) => {
-  try {
-    const organizations = await getAllOrganizations();
-    res.render('organizations', {
-      title: 'Organizations',
-      currentPage: 'organizations',
-      organizations,
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-app.get('/projects', async (req, res, next) => {
-  try {
-    const projects = await getAllProjects();
-    res.render('projects', {
-      title: 'Service Projects',
-      currentPage: 'projects',
-      projects,
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-app.get('/categories', async (req, res, next) => {
-  try {
-    const categories = await getAllCategories();
-    res.render('categories', {
-      title: 'Categories',
-      currentPage: 'categories',
-      categories,
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-app.get('/test-error', (req, res, next) => {
-  const error = new Error('This is a test error');
-  error.status = 500;
-  next(error);
-});
+app.use(router);
 
 app.use((req, res, next) => {
   const error = new Error('Page Not Found');
