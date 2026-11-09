@@ -275,6 +275,26 @@ h2 {
     min-height: 210px;
 }
 
+.category-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.category-tags a {
+    display: inline-block;
+    padding: 4px 11px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-background);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
 .card-number,
 .category-icon {
     display: inline-block;
