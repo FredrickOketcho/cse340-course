@@ -34,3 +34,47 @@ export const getProjectsByOrganizationId = async (organizationId) => {
   );
   return result.rows;
 };
+
+export const getUpcomingProjects = async (numberOfProjects) => {
+  if (!Number.isSafeInteger(numberOfProjects) || numberOfProjects < 1) {
+    throw new RangeError('numberOfProjects must be a positive safe integer.');
+  }
+
+  const result = await pool.query(
+    `SELECT
+      project.project_id,
+      project.title,
+      project.description,
+      TO_CHAR(project.project_date, 'FMMonth DD, YYYY') AS date,
+      project.location,
+      project.organization_id,
+      organization.name AS organization_name
+    FROM service_projects AS project
+    JOIN organizations AS organization
+      ON organization.organization_id = project.organization_id
+    WHERE project.project_date >= CURRENT_DATE
+    ORDER BY project.project_date ASC, project.title
+    LIMIT $1`,
+    [numberOfProjects],
+  );
+  return result.rows;
+};
+
+export const getProjectDetails = async (id) => {
+  const result = await pool.query(
+    `SELECT
+      project.project_id,
+      project.title,
+      project.description,
+      TO_CHAR(project.project_date, 'FMMonth DD, YYYY') AS date,
+      project.location,
+      project.organization_id,
+      organization.name AS organization_name
+    FROM service_projects AS project
+    JOIN organizations AS organization
+      ON organization.organization_id = project.organization_id
+    WHERE project.project_id = $1`,
+    [id],
+  );
+  return result.rows[0] ?? null;
+};

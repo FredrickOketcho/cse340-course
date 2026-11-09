@@ -2,7 +2,7 @@
 <section class="page-intro">
     <p class="eyebrow">Turn good intentions into action</p>
     <h1><%= title %></h1>
-    <p class="lead">Choose a project and help make a lasting difference in your community.</p>
+    <p class="lead">Choose an upcoming project and help make a lasting difference in your community.</p>
 </section>
 <section aria-labelledby="projects-heading">
     <h2 class="section-heading" id="projects-heading">Service projects</h2>
@@ -10,14 +10,16 @@
         <% projects.forEach((project, index) => { %>
             <article class="content-card project-card">
                 <span class="card-number" aria-hidden="true"><%= String(index + 1).padStart(2, '0') %></span>
-                <h3><%= project.project_date %>: <%= project.title %> (<%= project.organization_name %>)</h3>
+                <h3><a href="/project/<%= project.project_id %>"><%= project.title %></a></h3>
+                <p><strong>Organization:</strong> <a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a></p>
+                <p><strong>Date:</strong> <%= project.date %></p>
                 <p><%= project.description %></p>
                 <p><strong>Location:</strong> <%= project.location %></p>
-                <% if (project.categories) { %>
-                    <p><strong>Categories:</strong> <%= project.categories %></p>
-                <% } %>
             </article>
         <% }) %>
+        <% if (projects.length === 0) { %>
+            <p>There are no upcoming service projects at this time.</p>
+        <% } %>
     </div>
 </section>
 <%- include('partials/footer') %>
