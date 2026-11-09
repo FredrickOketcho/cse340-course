@@ -23,3 +23,14 @@ export const getAllProjects = async () => {
   `);
   return result.rows;
 };
+
+export const getProjectsByOrganizationId = async (organizationId) => {
+  const result = await pool.query(
+    `SELECT project_id, title, project_date, description, location
+    FROM service_projects
+    WHERE organization_id = $1
+    ORDER BY project_date, title`,
+    [organizationId],
+  );
+  return result.rows;
+};

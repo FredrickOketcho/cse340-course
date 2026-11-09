@@ -1,0 +1,28 @@
+<%- include('partials/header', { title, currentPage }) %>
+<section class="page-intro">
+    <p class="eyebrow">Our community partner</p>
+    <h1><%= organization.name %></h1>
+</section>
+<section class="content-card organization-card" aria-label="Organization details">
+    <% if (organization.logo_filename) { %>
+        <img src="/images/<%= organization.logo_filename %>" alt="<%= organization.name %> logo">
+    <% } %>
+    <div>
+        <h2><%= organization.name %></h2>
+        <p><%= organization.description %></p>
+        <a href="mailto:<%= organization.email %>"><%= organization.email %></a>
+    </div>
+</section>
+<section aria-labelledby="organization-projects-heading">
+    <h2 class="section-heading" id="organization-projects-heading">Service projects</h2>
+    <% if (projects.length > 0) { %>
+        <ul>
+            <% projects.forEach((project) => { %>
+                <li><a href="/project/<%= project.project_id %>"><%= project.title %></a></li>
+            <% }) %>
+        </ul>
+    <% } else { %>
+        <p>This organization does not have any service projects yet.</p>
+    <% } %>
+</section>
+<%- include('partials/footer') %>

@@ -8,3 +8,13 @@ export const getAllOrganizations = async () => {
   );
   return result.rows;
 };
+
+export const getOrganizationById = async (organizationId) => {
+  const result = await pool.query(
+    `SELECT organization_id, name, description, email, logo_filename
+    FROM organizations
+    WHERE organization_id = $1`,
+    [organizationId],
+  );
+  return result.rows[0] ?? null;
+};
