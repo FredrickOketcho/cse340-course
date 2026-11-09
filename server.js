@@ -7,7 +7,7 @@ import { getAllOrganizations } from './src/models/organizations.js';
 import { getAllProjects } from './src/models/projects.js';
 import { initializeDatabase } from './src/database.js';
 
-const nodeEnv = process.env.NODE_ENV?.toLowerCase() || 'production';
+const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
 const port = process.env.PORT || 3000;
 
 const __filename = fileURLToPath(import.meta.url);
@@ -18,6 +18,18 @@ const app = express();
 
 app.set('view engine', 'ejs');
 app.set('views', viewsPath);
+
+app.use((req, res, next) => {
+  if (NODE_ENV === 'development') {
+    console.log(`${req.method} ${req.url}`);
+  }
+  next();
+});
+
+app.use((req, res, next) => {
+  res.locals.NODE_ENV = NODE_ENV;
+  next();
+});
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -77,5 +89,5 @@ await initializeDatabase();
 
 app.listen(port, () => {
   console.log(`Server is running at http://127.0.0.1:${port}`);
-  console.log(`Environment: ${nodeEnv}`);
+  console.log(`Environment: ${NODE_ENV}`);
 });
