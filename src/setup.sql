@@ -21,13 +21,16 @@ SET logo_filename = EXCLUDED.logo_filename;
 
 CREATE TABLE IF NOT EXISTS service_projects (
     project_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    title VARCHAR(160) NOT NULL,
+    title VARCHAR(200) NOT NULL,
     project_date DATE NOT NULL,
     description TEXT NOT NULL,
     location VARCHAR(255),
     organization_id INTEGER NOT NULL REFERENCES organizations (organization_id) ON DELETE CASCADE,
     UNIQUE (organization_id, title)
 );
+
+ALTER TABLE service_projects
+    ALTER COLUMN title TYPE VARCHAR(200);
 
 ALTER TABLE service_projects
     ADD COLUMN IF NOT EXISTS location VARCHAR(255);

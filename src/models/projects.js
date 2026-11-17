@@ -1,5 +1,20 @@
 import pool from '../database.js';
 
+export const createProject = async (title, description, location, date, organizationId) => {
+  const result = await pool.query(
+    `INSERT INTO service_projects (title, description, location, project_date, organization_id)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING project_id`,
+    [title, description, location, date, organizationId],
+  );
+
+  if (result.rows.length === 0) {
+    throw new Error('Failed to create service project');
+  }
+
+  return result.rows[0].project_id;
+};
+
 export const getAllProjects = async () => {
   const result = await pool.query(`
     SELECT
