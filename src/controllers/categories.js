@@ -3,8 +3,20 @@ import {
   getCategoryById,
   getProjectsByCategoryId,
   updateCategoryAssignments,
+  createCategory,
+  updateCategory,
 } from '../models/categories.js';
 import { getProjectDetails, getCategoriesByProjectId } from '../models/projects.js';
+import { body, validationResult } from 'express-validator';
+
+const categoryValidation = [
+  body('name')
+    .trim()
+    .notEmpty()
+    .withMessage('Category name is required')
+    .isLength({ min: 3, max: 80 })
+    .withMessage('Category name must be between 3 and 80 characters'),
+];
 
 const showCategoriesPage = async (req, res, next) => {
   try {
@@ -44,6 +56,86 @@ const showCategoryDetailsPage = async (req, res, next) => {
       category,
       projects,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const showNewCategoryForm = (req, res) => {
+  res.render('new-category', {
+    title: 'Add New Category',
+    currentPage: 'categories',
+  });
+};
+
+const processNewCategoryForm = async (req, res, next) => {
+  try {
+    const results = validationResult(req);
+    if (!results.isEmpty()) {
+      results.array().forEach((error) => req.flash('error', error.msg));
+      return res.redirect('/new-category');
+    }
+
+    const categoryId = await createCategory(req.body.name);
+    req.flash('success', 'Category added successfully!');
+    res.redirect(`/category/${categoryId}`);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const showEditCategoryForm = async (req, res, next) => {
+  const categoryId = Number(req.params.id);
+  if (!Number.isSafeInteger(categoryId) || categoryId < 1) {
+    const error = new Error('Page Not Found');
+    error.status = 404;
+    next(error);
+    return;
+  }
+
+  try {
+    const category = await getCategoryById(categoryId);
+    if (!category) {
+      const error = new Error('Page Not Found');
+      error.status = 404;
+      next(error);
+      return;
+    }
+    res.render('edit-category', {
+      title: 'Edit Category',
+      currentPage: 'categories',
+      category,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const processEditCategoryForm = async (req, res, next) => {
+  const categoryId = Number(req.params.id);
+  if (!Number.isSafeInteger(categoryId) || categoryId < 1) {
+    const error = new Error('Page Not Found');
+    error.status = 404;
+    next(error);
+    return;
+  }
+
+  try {
+    const results = validationResult(req);
+    if (!results.isEmpty()) {
+      results.array().forEach((error) => req.flash('error', error.msg));
+      return res.redirect(`/edit-category/${categoryId}`);
+    }
+
+    const updatedId = await updateCategory(categoryId, req.body.name);
+    if (!updatedId) {
+      const error = new Error('Page Not Found');
+      error.status = 404;
+      next(error);
+      return;
+    }
+    req.flash('success', 'Category updated successfully!');
+    res.redirect(`/category/${updatedId}`);
   } catch (error) {
     next(error);
   }
@@ -125,6 +217,11 @@ const processAssignCategoriesForm = async (req, res, next) => {
 export {
   showCategoriesPage,
   showCategoryDetailsPage,
+  showNewCategoryForm,
+  processNewCategoryForm,
+  showEditCategoryForm,
+  processEditCategoryForm,
+  categoryValidation,
   showAssignCategoriesForm,
   processAssignCategoriesForm,
 };

@@ -8,7 +8,7 @@
 <form action="/project/<%= project.project_id %>/assign-categories" method="POST">
     <% const assignedIds = assignedCategories.map((category) => Number(category.category_id)); %>
     <% categories.forEach((category) => { %>
-        <div class="form-group">
+        <div class="form-group checkbox-group">
             <input
                 type="checkbox"
                 id="category-<%= category.category_id %>"
