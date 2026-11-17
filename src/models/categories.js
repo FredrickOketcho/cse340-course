@@ -27,3 +27,36 @@ export const getProjectsByCategoryId = async (categoryId) => {
   );
   return result.rows;
 };
+
+const assignCategoryToProject = async (projectId, categoryId, db = pool) => {
+  await db.query(
+    `INSERT INTO project_categories (project_id, category_id)
+    VALUES ($1, $2)
+    ON CONFLICT (project_id, category_id) DO NOTHING`,
+    [projectId, categoryId],
+  );
+};
+
+export const updateCategoryAssignments = async (projectId, categoryIds) => {
+  if (!Array.isArray(categoryIds)) {
+    throw new TypeError('categoryIds must be an array.');
+  }
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    await client.query(
+      'DELETE FROM project_categories WHERE project_id = $1',
+      [projectId],
+    );
+    for (const categoryId of categoryIds) {
+      await assignCategoryToProject(projectId, categoryId, client);
+    }
+    await client.query('COMMIT');
+  } catch (error) {
+    await client.query('ROLLBACK').catch(() => {});
+    throw error;
+  } finally {
+    client.release();
+  }
+};
