@@ -4,6 +4,8 @@ import { showHomePage } from './controllers/index.js';
 import {
   showOrganizationsPage,
   showOrganizationPage,
+  showNewOrganizationForm,
+  processNewOrganizationForm,
 } from './controllers/organizations.js';
 import {
   showProjectsPage,
@@ -19,6 +21,8 @@ const router = express.Router();
 
 router.get('/', showHomePage);
 router.get('/organizations', showOrganizationsPage);
+router.get('/new-organization', showNewOrganizationForm);
+router.post('/new-organization', processNewOrganizationForm);
 router.get('/organization/:id', showOrganizationPage);
 router.get('/projects', showProjectsPage);
 router.get('/project/:id', showProjectDetailsPage);
