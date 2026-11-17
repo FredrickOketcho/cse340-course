@@ -25,3 +25,6 @@ The Render web service needs a `DATABASE_URL` environment variable containing
 the connection string for an existing PostgreSQL database. The Blueprint does
 not provision a database, so it can use an existing database without creating
 another free-tier database. The app creates and seeds missing tables at startup.
+The Blueprint generates a `SESSION_SECRET` automatically. If the service was
+created directly in the Render Dashboard instead of from this Blueprint, add a
+`SESSION_SECRET` environment variable in the service's Environment settings.
