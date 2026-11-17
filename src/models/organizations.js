@@ -38,3 +38,15 @@ export const createOrganization = async (name, description, contactEmail, logoFi
 
   return result.rows[0].organization_id;
 };
+
+export const updateOrganization = async (id, name, description, contactEmail, logoFilename) => {
+  const result = await pool.query(
+    `UPDATE organizations
+    SET name = $1, description = $2, email = $3, logo_filename = $4
+    WHERE organization_id = $5
+    RETURNING organization_id`,
+    [name, description, contactEmail, logoFilename, id],
+  );
+
+  return result.rows[0]?.organization_id ?? null;
+};

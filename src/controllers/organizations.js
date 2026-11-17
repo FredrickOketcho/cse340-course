@@ -2,6 +2,7 @@ import {
   getAllOrganizations,
   getOrganizationById,
   createOrganization,
+  updateOrganization,
 } from '../models/organizations.js';
 import { getProjectsByOrganizationId } from '../models/projects.js';
 import { body, validationResult } from 'express-validator';
@@ -28,6 +29,7 @@ const organizationValidation = [
     .withMessage('Contact email is required')
     .isEmail()
     .withMessage('Please provide a valid email address'),
+  body('logoFilename').trim(),
 ];
 
 const showOrganizationsPage = async (req, res, next) => {
@@ -80,6 +82,37 @@ const showNewOrganizationForm = (req, res) => {
   });
 };
 
+const showEditOrganizationForm = async (req, res, next) => {
+  const organizationId = Number(req.params.id);
+  if (!Number.isSafeInteger(organizationId) || organizationId < 1) {
+    const error = new Error('Page Not Found');
+    error.status = 404;
+    next(error);
+    return;
+  }
+
+  try {
+    const organization = await getOrganizationById(organizationId);
+    if (!organization) {
+      const error = new Error('Page Not Found');
+      error.status = 404;
+      next(error);
+      return;
+    }
+
+    res.render('edit-organization', {
+      title: `Edit ${organization.name}`,
+      currentPage: 'organizations',
+      organizationDetails: {
+        ...organization,
+        contact_email: organization.email,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const processNewOrganizationForm = async (req, res, next) => {
   try {
     const results = validationResult(req);
@@ -104,10 +137,52 @@ const processNewOrganizationForm = async (req, res, next) => {
   }
 };
 
+const processEditOrganizationForm = async (req, res, next) => {
+  const organizationId = Number(req.params.id);
+  if (!Number.isSafeInteger(organizationId) || organizationId < 1) {
+    const error = new Error('Page Not Found');
+    error.status = 404;
+    next(error);
+    return;
+  }
+
+  try {
+    const results = validationResult(req);
+    if (!results.isEmpty()) {
+      results.array().forEach((error) => {
+        req.flash('error', error.msg);
+      });
+      return res.redirect(`/edit-organization/${organizationId}`);
+    }
+
+    const { name, description, contactEmail, logoFilename } = req.body;
+    const updatedId = await updateOrganization(
+      organizationId,
+      name,
+      description,
+      contactEmail,
+      logoFilename,
+    );
+    if (!updatedId) {
+      const error = new Error('Page Not Found');
+      error.status = 404;
+      next(error);
+      return;
+    }
+
+    req.flash('success', 'Organization updated successfully!');
+    res.redirect(`/organization/${updatedId}`);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export {
   showOrganizationsPage,
   showOrganizationPage,
   showNewOrganizationForm,
+  showEditOrganizationForm,
   processNewOrganizationForm,
+  processEditOrganizationForm,
   organizationValidation,
 };
