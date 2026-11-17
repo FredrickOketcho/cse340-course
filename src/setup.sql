@@ -7,12 +7,15 @@ CREATE TABLE IF NOT EXISTS organizations (
 );
 
 ALTER TABLE organizations
+    ALTER COLUMN name TYPE VARCHAR(150);
+
+ALTER TABLE organizations
     ADD COLUMN IF NOT EXISTS logo_filename VARCHAR(255);
 
 INSERT INTO organizations (name, description, email, logo_filename) VALUES
-    ('BrightFuture Builders', 'Building brighter neighborhoods through community action.', 'info@brightfuture.org', 'brightfuture-logo.png'),
-    ('GreenHarvest Growers', 'Growing healthy food and stronger local connections.', 'contact@greenharvest.org', 'greenharvest-logo.png'),
-    ('UnityServe Volunteers', 'Bringing people together to support neighbors in need.', 'hello@unityserve.org', 'unityserve-logo.png')
+    ('BrightFuture Builders', 'Building brighter neighborhoods through community action.', 'info@brightfuture.org', 'brightfuture-builders.jpg'),
+    ('GreenHarvest Growers', 'Growing healthy food and stronger local connections.', 'contact@greenharvest.org', 'greenharvest-growers.jpg'),
+    ('UnityServe Volunteers', 'Bringing people together to support neighbors in need.', 'hello@unityserve.org', 'unityserve-volunteers.jpg')
 ON CONFLICT (name) DO UPDATE
 SET logo_filename = EXCLUDED.logo_filename;
 
