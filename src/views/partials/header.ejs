@@ -25,3 +25,11 @@
         </div>
     </header>
     <main class="main-content">
+        <% const messages = flash(); %>
+        <% Object.keys(messages).forEach((type) => { %>
+            <% messages[type].forEach((message) => { %>
+                <div class="alert <%= type %>" role="<%= type === 'error' ? 'alert' : 'status' %>" aria-live="polite">
+                    <%= message %>
+                </div>
+            <% }); %>
+        <% }); %>

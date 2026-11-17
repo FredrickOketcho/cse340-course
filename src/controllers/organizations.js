@@ -64,6 +64,7 @@ const processNewOrganizationForm = async (req, res, next) => {
       contactEmail,
       'placeholder-logo.png',
     );
+    req.flash('success', 'Organization added successfully!');
     res.redirect(`/organization/${organizationId}`);
   } catch (error) {
     next(error);

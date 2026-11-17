@@ -1,12 +1,19 @@
 import 'dotenv/config';
 import express from 'express';
+import session from 'express-session';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import { initializeDatabase } from './src/database.js';
+import flash from './src/middleware/flash.js';
 import router from './src/routes.js';
 
 const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
 const port = process.env.PORT || 3000;
+const SESSION_SECRET = process.env.SESSION_SECRET;
+
+if (!SESSION_SECRET) {
+  throw new Error('SESSION_SECRET must be set to configure secure sessions.');
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,6 +23,15 @@ const app = express();
 
 app.set('view engine', 'ejs');
 app.set('views', viewsPath);
+
+app.use(session({
+  secret: SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: { maxAge: 60 * 60 * 1000 },
+}));
+
+app.use(flash);
 
 app.use((req, res, next) => {
   if (NODE_ENV === 'development') {
