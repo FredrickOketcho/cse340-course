@@ -3,6 +3,7 @@ import {
   getProjectDetails,
   getCategoriesByProjectId,
   createProject,
+  updateProject,
 } from '../models/projects.js';
 import { getAllOrganizations } from '../models/organizations.js';
 import { body, validationResult } from 'express-validator';
@@ -116,10 +117,78 @@ const processNewProjectForm = async (req, res, next) => {
   }
 };
 
+const showEditProjectForm = async (req, res, next) => {
+  const projectId = Number(req.params.id);
+  if (!Number.isSafeInteger(projectId) || projectId < 1) {
+    const error = new Error('Page Not Found');
+    error.status = 404;
+    next(error);
+    return;
+  }
+
+  try {
+    const [project, organizations] = await Promise.all([
+      getProjectDetails(projectId),
+      getAllOrganizations(),
+    ]);
+    if (!project) {
+      const error = new Error('Page Not Found');
+      error.status = 404;
+      next(error);
+      return;
+    }
+
+    res.render('update-project', {
+      title: 'Edit Service Project',
+      currentPage: 'projects',
+      project,
+      organizations,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const processEditProjectForm = async (req, res, next) => {
+  const projectId = Number(req.params.id);
+  if (!Number.isSafeInteger(projectId) || projectId < 1) {
+    const error = new Error('Page Not Found');
+    error.status = 404;
+    next(error);
+    return;
+  }
+
+  try {
+    const results = validationResult(req);
+    if (!results.isEmpty()) {
+      results.array().forEach((error) => {
+        req.flash('error', error.msg);
+      });
+      return res.redirect(`/edit-project/${projectId}`);
+    }
+
+    const { title, description, location, date, organizationId } = req.body;
+    const updatedId = await updateProject(
+      projectId,
+      title,
+      description,
+      location,
+      date,
+      organizationId,
+    );
+    req.flash('success', 'Service project updated successfully!');
+    res.redirect(`/project/${updatedId}`);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export {
   showProjectsPage,
   showProjectDetailsPage,
   showNewProjectForm,
   processNewProjectForm,
+  showEditProjectForm,
+  processEditProjectForm,
   projectValidation,
 };

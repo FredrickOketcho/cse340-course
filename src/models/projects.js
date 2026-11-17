@@ -15,6 +15,24 @@ export const createProject = async (title, description, location, date, organiza
   return result.rows[0].project_id;
 };
 
+export const updateProject = async (id, title, description, location, date, organizationId) => {
+  const result = await pool.query(
+    `UPDATE service_projects
+    SET title = $1, description = $2, location = $3, project_date = $4, organization_id = $5
+    WHERE project_id = $6
+    RETURNING project_id`,
+    [title, description, location, date, organizationId, id],
+  );
+
+  if (result.rows.length === 0) {
+    const error = new Error('Service project not found');
+    error.status = 404;
+    throw error;
+  }
+
+  return result.rows[0].project_id;
+};
+
 export const getAllProjects = async () => {
   const result = await pool.query(`
     SELECT
@@ -83,6 +101,7 @@ export const getProjectDetails = async (id) => {
       project.title,
       project.description,
       TO_CHAR(project.project_date, 'FMMonth DD, YYYY') AS date,
+      TO_CHAR(project.project_date, 'YYYY-MM-DD') AS date_input,
       project.location,
       project.organization_id,
       organization.name AS organization_name
