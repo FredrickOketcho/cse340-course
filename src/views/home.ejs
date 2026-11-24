@@ -14,4 +14,7 @@
     <h2 id="welcome-heading">Find a way to serve</h2>
     <p>Discover local opportunities, meet organizations doing meaningful work, and find a project that matches your interests.</p>
 </section>
+<% if (isLoggedIn) { %>
+    <p><a class="button-link" href="/dashboard">My Dashboard</a></p>
+<% } %>
 <%- include('partials/footer') %>

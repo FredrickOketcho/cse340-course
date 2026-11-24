@@ -1,0 +1,12 @@
+<%- include('partials/header', { title, currentPage }) %>
+<h1><%= title %></h1>
+
+<section aria-labelledby="dashboard-heading">
+    <h2 id="dashboard-heading">Dashboard</h2>
+    <p>Name: <%= name %></p>
+    <p>Username: <%= email %></p>
+    <% if (user?.role_name === 'admin') { %>
+        <p><a class="button-link" href="/users">View Registered Users</a></p>
+    <% } %>
+</section>
+<%- include('partials/footer') %>

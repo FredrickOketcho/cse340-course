@@ -4,7 +4,9 @@
     <h1><%= project.title %></h1>
 </section>
 <article class="content-card project-card">
-    <p><a href="/edit-project/<%= project.project_id %>">Edit Service Project</a></p>
+    <% if (user?.role_name === 'admin') { %>
+        <p><a href="/edit-project/<%= project.project_id %>">Edit Service Project</a></p>
+    <% } %>
     <p><%= project.description %></p>
     <p><strong>Date:</strong> <%= project.date %></p>
     <p><strong>Location:</strong> <%= project.location || 'To be announced' %></p>
@@ -17,6 +19,8 @@
             <% }) %>
         </ul>
     <% } %>
-    <p><a href="/project/<%= project.project_id %>/assign-categories">Edit Categories</a></p>
+    <% if (user?.role_name === 'admin') { %>
+        <p><a href="/project/<%= project.project_id %>/assign-categories">Edit Categories</a></p>
+    <% } %>
 </article>
 <%- include('partials/footer') %>

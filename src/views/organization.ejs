@@ -13,7 +13,9 @@
         <a href="mailto:<%= organization.email %>"><%= organization.email %></a>
     </div>
 </section>
-<p><a href="/edit-organization/<%= organization.organization_id %>">Edit organization</a></p>
+<% if (user?.role_name === 'admin') { %>
+    <p><a href="/edit-organization/<%= organization.organization_id %>">Edit organization</a></p>
+<% } %>
 <section aria-labelledby="organization-projects-heading">
     <h2 class="section-heading" id="organization-projects-heading">Service projects</h2>
     <% if (projects.length > 0) { %>

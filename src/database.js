@@ -9,7 +9,9 @@ if (!process.env.DATABASE_URL) {
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined,
+  ssl: (process.env.NODE_ENV?.toLowerCase() || 'production') === 'production'
+    ? { rejectUnauthorized: false }
+    : undefined,
 });
 
 export async function initializeDatabase() {

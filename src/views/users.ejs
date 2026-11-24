@@ -1,0 +1,33 @@
+<%- include('partials/header', { title, currentPage }) %>
+<section class="page-intro">
+    <p class="eyebrow">Administration</p>
+    <h1><%= title %></h1>
+    <p class="lead">Review registered accounts and their assigned roles.</p>
+</section>
+
+<% if (users.length > 0) { %>
+    <div class="table-scroll">
+        <table class="users-table">
+            <caption class="visually-hidden">Registered users and roles</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% users.forEach((listedUser) => { %>
+                    <tr>
+                        <td><%= listedUser.name %></td>
+                        <td><%= listedUser.email %></td>
+                        <td><span class="role-badge"><%= listedUser.role_name %></span></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+<% } else { %>
+    <p>No users have registered yet.</p>
+<% } %>
+<%- include('partials/footer') %>
